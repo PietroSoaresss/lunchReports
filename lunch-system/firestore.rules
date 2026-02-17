@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /employees/{code} {
+      allow read: if true;
+      allow create: if request.resource.data.code == code
+        && request.resource.data.name is string
+        && request.resource.data.sector is string
+        && request.resource.data.code is string
+        && request.resource.data.active is bool;
+      allow update: if request.resource.data.code == resource.data.code
+        && request.resource.data.name is string
+        && (!("sector" in request.resource.data) || request.resource.data.sector is string)
+        && request.resource.data.active is bool;
+      allow delete: if false;
+    }
+
+    match /lunch_logs/{logId} {
+      allow read: if true;
+      allow create: if !exists(/databases/$(database)/documents/lunch_logs/$(logId))
+        && request.resource.data.employeeCode is string
+        && request.resource.data.employeeName is string
+        && request.resource.data.dayLocal is string
+        && request.resource.data.source == "BARCODE";
+      allow update, delete: if false;
+    }
+  }
+}

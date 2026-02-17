@@ -1,0 +1,70 @@
+import { useEffect, useState } from "react";
+import LunchReport from "../components/LunchReport";
+import MonthlyBarChart from "../components/MonthlyBarChart";
+import { exportCSV, getLastSixMonthsStats, getLunchLogs } from "../services/lunchService";
+
+function getTodayInSaoPaulo() {
+  return new Intl.DateTimeFormat("sv-SE", { timeZone: "America/Sao_Paulo" }).format(new Date());
+}
+
+export default function ReportsPage() {
+  const [selectedDate, setSelectedDate] = useState(getTodayInSaoPaulo());
+  const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [loadingChart, setLoadingChart] = useState(false);
+  const [monthlyStats, setMonthlyStats] = useState([]);
+  const [error, setError] = useState("");
+
+  async function loadDailyLogs(date) {
+    setLoading(true);
+    setError("");
+
+    try {
+      const data = await getLunchLogs(date);
+      setLogs(data);
+    } catch (loadError) {
+      setError("Nao foi possivel carregar o relatorio.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function loadMonthlyStats() {
+    setLoadingChart(true);
+    try {
+      const data = await getLastSixMonthsStats();
+      setMonthlyStats(data);
+    } catch (error) {
+      setError("Nao foi possivel carregar o grafico mensal.");
+    } finally {
+      setLoadingChart(false);
+    }
+  }
+
+  useEffect(() => {
+    loadDailyLogs(selectedDate);
+  }, [selectedDate]);
+
+  useEffect(() => {
+    loadMonthlyStats();
+  }, []);
+
+  return (
+    <div className="space-y-4">
+      <section className="rounded-xl border border-slate-200 bg-white p-4">
+        <label className="mb-2 block text-sm font-semibold text-slate-700">Data do relatorio</label>
+        <input
+          type="date"
+          value={selectedDate}
+          onChange={(event) => setSelectedDate(event.target.value)}
+          className="rounded-lg border border-slate-300 px-3 py-2"
+        />
+      </section>
+
+      {error && <p className="rounded-lg bg-red-100 px-4 py-2 text-sm text-red-700">{error}</p>}
+
+      <MonthlyBarChart data={monthlyStats} loading={loadingChart} />
+      <LunchReport logs={logs} date={selectedDate} onExport={exportCSV} loading={loading} />
+    </div>
+  );
+}
