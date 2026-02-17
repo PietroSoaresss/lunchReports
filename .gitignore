@@ -10,3 +10,7 @@ dist/
 *.pem
 *.key
 *firebase-adminsdk*.json
+coverage/
+**/coverage/
+.DS_Store
+Thumbs.db
