@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "almocosagross"
-  }
+    "default": "almocosagross",
+    "agross": "almocosagross"
+  },
+  "targets": {},
+  "etags": {}
 }

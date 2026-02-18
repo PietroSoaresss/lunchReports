@@ -1,5 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { registerLunch } from "../services/lunchService";
+import { getRecentLunchLogs, registerLunch } from "../services/lunchService";
+
+function formatLogTime(value) {
+  if (!value) return "";
+  if (typeof value?.toDate === "function") {
+    return value.toDate().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  }
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+}
 
 export default function HomePage() {
   const inputRef = useRef(null);
@@ -11,9 +21,21 @@ export default function HomePage() {
   const [feedback, setFeedback] = useState(null);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [historyError, setHistoryError] = useState("");
+
+  async function loadRecentHistory() {
+    try {
+      const logs = await getRecentLunchLogs(10);
+      setHistory(logs);
+      setHistoryError("");
+    } catch (error) {
+      setHistoryError("Nao foi possivel carregar os ultimos registros.");
+    }
+  }
 
   useEffect(() => {
     inputRef.current?.focus();
+    loadRecentHistory();
   }, []);
 
   const resetInput = useCallback(() => {
@@ -47,9 +69,7 @@ export default function HomePage() {
           type: "success",
           message: `Almoco registrado! ${data.employeeName}`
         });
-        setHistory((prev) =>
-          [{ ...data, time: new Date().toLocaleTimeString("pt-BR") }, ...prev].slice(0, 10)
-        );
+        await loadRecentHistory();
       } else if (data.status === "ALREADY_REGISTERED") {
         const time = data.registeredAt
           ? new Date(data.registeredAt).toLocaleTimeString("pt-BR", {
@@ -149,22 +169,28 @@ export default function HomePage() {
         </div>
       )}
 
-      {history.length > 0 && (
-        <div className="mt-8 w-full">
-          <h2 className="mb-2 text-sm font-semibold text-slate-500">Registros desta sessao</h2>
+      <div className="mt-8 w-full">
+        <h2 className="mb-2 text-sm font-semibold text-slate-500">Ultimos 10 registros</h2>
+        {history.length === 0 ? (
+          <p className="text-sm text-slate-500">Nenhum registro encontrado.</p>
+        ) : (
           <ul className="space-y-1">
-            {history.map((item, index) => (
+            {history.map((item) => (
               <li
-                key={`${item.employeeCode}-${index}`}
-                className="flex justify-between rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm"
+                key={item.id}
+                className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm"
               >
-                <span>{item.employeeName}</span>
-                <span className="text-slate-400">{item.time}</span>
+                <div>
+                  <p className="font-medium text-slate-800">{item.employeeName}</p>
+                  <p className="text-xs text-slate-500">{item.employeeCode}</p>
+                </div>
+                <span className="text-slate-500">{formatLogTime(item.registeredAt)}</span>
               </li>
             ))}
           </ul>
-        </div>
-      )}
+        )}
+        {historyError && <p className="mt-2 text-xs text-rose-600">{historyError}</p>}
+      </div>
     </div>
   );
 }

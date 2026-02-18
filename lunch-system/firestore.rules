@@ -12,6 +12,13 @@ service cloud.firestore {
         && request.resource.data.name is string
         && (!("sector" in request.resource.data) || request.resource.data.sector is string)
         && request.resource.data.active is bool;
+      allow delete: if true;
+    }
+
+    match /sectors/{sectorId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.name is string
+        && request.resource.data.normalizedId is string;
       allow delete: if false;
     }
 

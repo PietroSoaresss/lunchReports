@@ -1,7 +1,8 @@
-﻿import {
+import {
   collection,
   doc,
   getDocs,
+  limit,
   orderBy,
   query,
   runTransaction,
@@ -132,6 +133,12 @@ export async function getLastSixMonthsStats() {
   });
 
   return buckets.map((bucket) => ({ ...bucket, count: countByMonth.get(bucket.key) || 0 }));
+}
+
+export async function getRecentLunchLogs(maxItems = 10) {
+  const q = query(collection(db, "lunch_logs"), orderBy("registeredAt", "desc"), limit(maxItems));
+  const snap = await getDocs(q);
+  return snap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
 }
 
 export function exportCSV(logs, date) {
