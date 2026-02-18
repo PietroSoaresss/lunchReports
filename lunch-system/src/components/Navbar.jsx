@@ -20,10 +20,10 @@ export default function Navbar() {
               end={link.end}
               className={({ isActive }) =>
                 [
-                  "rounded-lg px-4 py-2 text-sm font-semibold transition",
+                  "rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-300 ease-out",
                   isActive
-                    ? "bg-[#006633] text-white"
-                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                    ? "bg-[#006633] text-white shadow-sm"
+                    : "bg-slate-100 text-slate-700 hover:-translate-y-0.5 hover:bg-slate-200"
                 ].join(" ")
               }
             >

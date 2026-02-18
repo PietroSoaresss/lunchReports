@@ -100,14 +100,56 @@ export async function registerLunch(employeeCode) {
 }
 
 export async function getLunchLogs(dayLocal) {
+  const q = query(collection(db, "lunch_logs"), where("dayLocal", "==", dayLocal));
+
+  const snap = await getDocs(q);
+  return snap.docs
+    .map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
+    .sort((a, b) => {
+      const aTime =
+        typeof a?.registeredAt?.toDate === "function"
+          ? a.registeredAt.toDate().getTime()
+          : new Date(a?.registeredAt || 0).getTime();
+      const bTime =
+        typeof b?.registeredAt?.toDate === "function"
+          ? b.registeredAt.toDate().getTime()
+          : new Date(b?.registeredAt || 0).getTime();
+      return aTime - bTime;
+    });
+}
+
+export async function getLunchLogsByMonth(monthRef) {
+  const normalizedMonth = String(monthRef || "").slice(0, 7);
+  if (!/^\d{4}-\d{2}$/.test(normalizedMonth)) {
+    return [];
+  }
+
+  const startDay = `${normalizedMonth}-01`;
+  const endDay = `${normalizedMonth}-31`;
   const q = query(
     collection(db, "lunch_logs"),
-    where("dayLocal", "==", dayLocal),
-    orderBy("registeredAt", "asc")
+    where("dayLocal", ">=", startDay),
+    where("dayLocal", "<=", endDay)
   );
 
   const snap = await getDocs(q);
-  return snap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+  return snap.docs
+    .map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
+    .sort((a, b) => {
+      const aDay = String(a?.dayLocal || "");
+      const bDay = String(b?.dayLocal || "");
+      if (aDay !== bDay) return aDay.localeCompare(bDay);
+
+      const aTime =
+        typeof a?.registeredAt?.toDate === "function"
+          ? a.registeredAt.toDate().getTime()
+          : new Date(a?.registeredAt || 0).getTime();
+      const bTime =
+        typeof b?.registeredAt?.toDate === "function"
+          ? b.registeredAt.toDate().getTime()
+          : new Date(b?.registeredAt || 0).getTime();
+      return aTime - bTime;
+    });
 }
 
 export async function getLastSixMonthsStats() {
@@ -157,4 +199,24 @@ export function exportCSV(logs, date) {
   a.download = `almoco_${date}.csv`;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+export async function exportXLSX(logs, date) {
+  const mod = await import("xlsx");
+  const XLSX = mod?.utils ? mod : mod?.default;
+  if (!XLSX?.utils || typeof XLSX.writeFile !== "function") {
+    throw new Error("XLSX_EXPORT_UNAVAILABLE");
+  }
+
+  const rows = logs.map((log) => ({
+    Nome: log.employeeName || "",
+    Codigo: log.employeeCode || "",
+    Dia: log.dayLocal || "",
+    Horario: formatTime(log.registeredAt)
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(rows);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Registros");
+  XLSX.writeFile(workbook, `almoco_${date}.xlsx`);
 }

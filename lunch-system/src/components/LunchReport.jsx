@@ -1,4 +1,12 @@
-﻿export default function LunchReport({ logs, date, onExport, loading }) {
+export default function LunchReport({ logs, date, onExportXLSX, loading }) {
+  async function handleExportXLSX() {
+    try {
+      await onExportXLSX(logs, date);
+    } catch (error) {
+      window.alert("Falha ao exportar XLSX.");
+    }
+  }
+
   function formatTime(value) {
     if (!value) return "";
     if (typeof value?.toDate === "function") {
@@ -14,11 +22,11 @@
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold">Registros do dia</h2>
         <button
-          onClick={() => onExport(logs, date)}
+          onClick={handleExportXLSX}
           disabled={logs.length === 0}
           className="rounded-lg bg-[#006633] px-4 py-2 text-sm font-semibold text-white hover:bg-[#005a2d] disabled:opacity-50"
         >
-          Exportar CSV
+          Exportar XLSX
         </button>
       </div>
 
