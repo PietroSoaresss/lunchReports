@@ -24,7 +24,7 @@ export default function EmployeeList({ employees, onToggle, onEdit, onDelete, lo
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-lg font-semibold">Funcionarios</h2>
+        <h2 className="text-lg font-semibold">Funcionários</h2>
         {employees.length > 0 && (
           <span className="text-sm text-slate-600">
             Mostrando {startItem}-{endItem} de {employees.length}
@@ -40,7 +40,7 @@ export default function EmployeeList({ employees, onToggle, onEdit, onDelete, lo
             <div>
               <p className="font-medium text-slate-800">{employee.name}</p>
               <p className="text-xs text-slate-500">Setor: {employee.sector || "-"}</p>
-              <p className="text-xs text-slate-500">Codigo: {employee.code}</p>
+              <p className="text-xs text-slate-500">Código: {employee.code}</p>
               <p className="text-xs text-slate-500">Status: {employee.active ? "Ativo" : "Inativo"}</p>
             </div>
             {(typeof onToggle === "function" || typeof onEdit === "function" || typeof onDelete === "function") && (
@@ -81,10 +81,10 @@ export default function EmployeeList({ employees, onToggle, onEdit, onDelete, lo
           </li>
         ))}
       </ul>
-      {employees.length === 0 && <p className="text-sm text-slate-500">Nenhum funcionario cadastrado.</p>}
+      {employees.length === 0 && <p className="text-sm text-slate-500">Nenhum funcionário cadastrado.</p>}
       {employees.length > 0 && (
         <div className="mt-4 flex items-center justify-between text-sm">
-          <span className="text-slate-600">Pagina {page} de {totalPages}</span>
+          <span className="text-slate-600">Página {page} de {totalPages}</span>
           <div className="flex gap-2">
             <button
               onClick={() => setPage((current) => Math.max(1, current - 1))}
@@ -98,7 +98,7 @@ export default function EmployeeList({ employees, onToggle, onEdit, onDelete, lo
               disabled={page === totalPages}
               className="rounded-lg border border-slate-300 px-3 py-1 text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Proxima
+              Próxima
             </button>
           </div>
         </div>

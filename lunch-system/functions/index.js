@@ -1,9 +1,19 @@
-﻿const { onCall, HttpsError } = require("firebase-functions/v2/https");
+const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { initializeApp } = require("firebase-admin/app");
+const { getAuth } = require("firebase-admin/auth");
 const { FieldValue, getFirestore } = require("firebase-admin/firestore");
 
 initializeApp();
 const db = getFirestore();
+const adminAuth = getAuth();
+
+async function assertAdminUser(uid) {
+  const userDoc = await db.collection("users").doc(uid).get();
+  const role = userDoc.exists ? userDoc.data()?.role : null;
+  if (role !== "admin") {
+    throw new HttpsError("permission-denied", "Apenas administradores podem executar esta acao.");
+  }
+}
 
 exports.registerLunch = onCall({ region: "southamerica-east1" }, async (request) => {
   const { employeeCode } = request.data ?? {};
@@ -145,4 +155,50 @@ exports.getLunchLogs = onCall({ region: "southamerica-east1" }, async (request) 
   });
 
   return { logs };
+});
+
+exports.createUserByAdmin = onCall({ region: "southamerica-east1" }, async (request) => {
+  if (!request.auth?.uid) {
+    throw new HttpsError("unauthenticated", "Usuario nao autenticado.");
+  }
+
+  await assertAdminUser(request.auth.uid);
+
+  const { name, email, password, role } = request.data ?? {};
+  const normalizedName = String(name || "").trim();
+  const normalizedEmail = String(email || "")
+    .trim()
+    .toLowerCase();
+  const normalizedRole = role === "admin" ? "admin" : "user";
+
+  if (!normalizedName || !normalizedEmail || !password || String(password).length < 6) {
+    throw new HttpsError("invalid-argument", "Dados invalidos para criar usuario.");
+  }
+
+  let createdUser;
+  try {
+    createdUser = await adminAuth.createUser({
+      email: normalizedEmail,
+      password: String(password),
+      displayName: normalizedName
+    });
+  } catch (error) {
+    throw new HttpsError("already-exists", "Nao foi possivel criar usuario com este email.");
+  }
+
+  await db
+    .collection("users")
+    .doc(createdUser.uid)
+    .set({
+      uid: createdUser.uid,
+      name: normalizedName,
+      email: normalizedEmail,
+      role: normalizedRole,
+      createdAt: FieldValue.serverTimestamp()
+    });
+
+  return {
+    status: "OK",
+    uid: createdUser.uid
+  };
 });

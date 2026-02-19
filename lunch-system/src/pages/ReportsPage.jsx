@@ -24,7 +24,7 @@ export default function ReportsPage() {
       const data = await getLunchLogs(date);
       setLogs(data);
     } catch (loadError) {
-      setError("Nao foi possivel carregar o relatorio.");
+      setError("Não foi possível carregar o relatório.");
     } finally {
       setLoading(false);
     }
@@ -36,7 +36,7 @@ export default function ReportsPage() {
       const data = await getLastSixMonthsStats();
       setMonthlyStats(data);
     } catch (error) {
-      setError("Nao foi possivel carregar o grafico mensal.");
+      setError("Não foi possível carregar o gráfico mensal.");
     } finally {
       setLoadingChart(false);
     }
@@ -57,12 +57,12 @@ export default function ReportsPage() {
     try {
       const monthlyLogs = await getLunchLogsByMonth(monthRef);
       if (monthlyLogs.length === 0) {
-        setError("Nao ha registros para exportar no mes selecionado.");
+        setError("Não há registros para exportar no mês selecionado.");
         return;
       }
       await exportXLSX(monthlyLogs, `${monthRef}_mensal`);
     } catch (exportError) {
-      setError("Nao foi possivel exportar o relatorio mensal.");
+      setError("Não foi possível exportar o relatório mensal.");
     } finally {
       setExportingMonth(false);
     }
@@ -73,7 +73,7 @@ export default function ReportsPage() {
       <section className="rounded-xl border border-slate-200 bg-white p-4">
         <div className="flex flex-wrap items-end gap-3">
           <label className="block">
-            <span className="mb-2 block text-sm font-semibold text-slate-700">Data do relatorio</span>
+            <span className="mb-2 block text-sm font-semibold text-slate-700">Data do relatório</span>
             <input
               type="date"
               value={selectedDate}

@@ -3,10 +3,10 @@ export default function MonthlyBarChart({ data, loading }) {
 
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-4">
-      <h2 className="mb-4 text-lg font-semibold">Registros nos ultimos 6 meses</h2>
+      <h2 className="mb-4 text-lg font-semibold">Registros nos últimos 6 meses</h2>
 
       {loading ? (
-        <p className="text-slate-600">Carregando grafico...</p>
+        <p className="text-slate-600">Carregando gráfico...</p>
       ) : (
         <div className="grid grid-cols-6 gap-3">
           {data.map((item) => {

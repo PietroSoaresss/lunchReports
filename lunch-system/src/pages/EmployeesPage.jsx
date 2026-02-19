@@ -14,7 +14,7 @@ export default function EmployeesPage() {
   const [recentEmployees, setRecentEmployees] = useState([]);
   const [loadingRecent, setLoadingRecent] = useState(true);
   const [recentError, setRecentError] = useState("");
-  const successMessage = message.startsWith("Funcionario cadastrado com sucesso");
+  const successMessage = message.startsWith("Funcionário cadastrado com sucesso");
   const sectorSuccessMessage = sectorMessage.startsWith("Setor cadastrado com sucesso");
 
   async function loadRecentEmployees(showLoading = true) {
@@ -24,7 +24,7 @@ export default function EmployeesPage() {
       const data = await listRecentEmployees(10);
       setRecentEmployees(data);
     } catch (error) {
-      setRecentError("Nao foi possivel atualizar os ultimos cadastrados.");
+      setRecentError("Não foi possível atualizar os últimos cadastrados.");
     } finally {
       if (showLoading) setLoadingRecent(false);
     }
@@ -82,13 +82,13 @@ export default function EmployeesPage() {
 
     try {
       const generatedCode = await addEmployee(form);
-      setMessage(`Funcionario cadastrado com sucesso. Codigo gerado: ${generatedCode}`);
+      setMessage(`Funcionário cadastrado com sucesso. Código gerado: ${generatedCode}`);
       await loadRecentEmployees(false);
     } catch (error) {
       if (error.message === "CODE_GENERATION_FAILED") {
-        setMessage("Falha ao gerar codigo unico. Tente novamente.");
+        setMessage("Falha ao gerar código único. Tente novamente.");
       } else {
-        setMessage("Falha ao cadastrar funcionario.");
+        setMessage("Falha ao cadastrar funcionário.");
       }
     } finally {
       setLoadingForm(false);
@@ -100,11 +100,11 @@ export default function EmployeesPage() {
       <div className="space-y-4">
         <section className="overflow-hidden rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-50 to-white p-5">
           <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
-            Cadastro de funcionarios
+            Cadastro de funcionários
           </p>
           <h1 className="mt-2 text-2xl font-bold text-slate-900">Novo colaborador</h1>
           <p className="mt-2 max-w-2xl text-sm text-slate-600">
-            Registre o funcionario para gerar o codigo unico usado no ponto de almoco.
+            Registre o funcionário para gerar o código único usado no ponto de almoço.
           </p>
         </section>
 
@@ -165,13 +165,13 @@ export default function EmployeesPage() {
 
       <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-5">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-          Ultimos 10 cadastrados
+          Últimos 10 cadastrados
         </h2>
 
         {loadingRecent && recentEmployees.length === 0 ? (
           <p className="mt-3 text-sm text-slate-500">Carregando...</p>
         ) : recentEmployees.length === 0 ? (
-          <p className="mt-3 text-sm text-slate-500">Nenhum funcionario cadastrado.</p>
+          <p className="mt-3 text-sm text-slate-500">Nenhum funcionário cadastrado.</p>
         ) : (
           <ul className="mt-3 space-y-2">
             {recentEmployees.map((employee) => (

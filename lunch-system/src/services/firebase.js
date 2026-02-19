@@ -16,7 +16,7 @@ const firebaseConfig = {
 const missing = ["apiKey", "messagingSenderId", "appId"].filter((key) => !firebaseConfig[key]);
 if (missing.length > 0) {
   throw new Error(
-    `Firebase Web SDK nao configurado. Preencha: ${missing.join(", ")} no arquivo .env do frontend.`
+    `Firebase Web SDK não configurado. Preencha: ${missing.join(", ")} no arquivo .env do frontend.`
   );
 }
 

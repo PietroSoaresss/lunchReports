@@ -184,7 +184,7 @@ export async function getRecentLunchLogs(maxItems = 10) {
 }
 
 export function exportCSV(logs, date) {
-  const header = "Nome,Codigo,Dia,Horario\n";
+  const header = "Nome,Código,Dia,Horário\n";
   const rows = logs
     .map((log) => {
       const time = formatTime(log.registeredAt);
@@ -196,7 +196,7 @@ export function exportCSV(logs, date) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `almoco_${date}.csv`;
+  a.download = `almoço_${date}.csv`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -210,13 +210,13 @@ export async function exportXLSX(logs, date) {
 
   const rows = logs.map((log) => ({
     Nome: log.employeeName || "",
-    Codigo: log.employeeCode || "",
+    Código: log.employeeCode || "",
     Dia: log.dayLocal || "",
-    Horario: formatTime(log.registeredAt)
+    Horário: formatTime(log.registeredAt)
   }));
 
   const worksheet = XLSX.utils.json_to_sheet(rows);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Registros");
-  XLSX.writeFile(workbook, `almoco_${date}.xlsx`);
+  XLSX.writeFile(workbook, `almoço_${date}.xlsx`);
 }

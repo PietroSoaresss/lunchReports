@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 
 const initialForm = {
   name: "",
-  sector: "",
-  active: true
+  sector: ""
 };
 
 export default function EmployeeForm({ onSubmit, loading, sectors = [], loadingSectors = false }) {
@@ -17,15 +16,15 @@ export default function EmployeeForm({ onSubmit, loading, sectors = [], loadingS
 
   async function handleSubmit(event) {
     event.preventDefault();
-    await onSubmit(form);
+    await onSubmit({ ...form, active: true });
     setForm(initialForm);
   }
 
   return (
     <form onSubmit={handleSubmit} className="grid gap-4 self-start rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="space-y-1">
-        <h2 className="text-lg font-semibold text-slate-900">Dados do funcionario</h2>
-        <p className="text-sm text-slate-500">Campos com * sao obrigatorios.</p>
+        <h2 className="text-lg font-semibold text-slate-900">Dados do funcionário</h2>
+        <p className="text-sm text-slate-500">Campos com * são obrigatórios.</p>
       </div>
 
       <label className="grid gap-2">
@@ -60,18 +59,6 @@ export default function EmployeeForm({ onSubmit, loading, sectors = [], loadingS
             ))
           )}
         </select>
-      </label>
-
-      <label className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700">
-        <span>Status no sistema</span>
-        <span className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={form.active}
-            onChange={(event) => setForm((prev) => ({ ...prev, active: event.target.checked }))}
-          />
-          {form.active ? "Ativo" : "Inativo"}
-        </span>
       </label>
 
       <button

@@ -1,17 +1,13 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut
-} from "firebase/auth";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../services/firebase";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [token, setToken] = useState("");
   const [loadingAuth, setLoadingAuth] = useState(true);
 
@@ -19,13 +15,18 @@ export function AuthProvider({ children }) {
     const unsub = onAuthStateChanged(auth, async (nextUser) => {
       if (!nextUser) {
         setUser(null);
+        setProfile(null);
         setToken("");
         setLoadingAuth(false);
         return;
       }
 
       const nextToken = await nextUser.getIdToken();
+      const profileSnap = await getDoc(doc(db, "users", nextUser.uid));
+      const profileData = profileSnap.exists() ? profileSnap.data() : null;
+
       setUser(nextUser);
+      setProfile(profileData);
       setToken(nextToken);
       setLoadingAuth(false);
     });
@@ -44,23 +45,8 @@ export function AuthProvider({ children }) {
   async function login(email, password) {
     const cred = await signInWithEmailAndPassword(auth, String(email || "").trim(), password);
     const jwt = await cred.user.getIdToken();
-    setToken(jwt);
-    return cred.user;
-  }
-
-  async function register({ name, email, password }) {
-    const cred = await createUserWithEmailAndPassword(auth, String(email || "").trim(), password);
-    const normalizedName = String(name || "").trim();
-
-    await setDoc(doc(db, "users", cred.user.uid), {
-      uid: cred.user.uid,
-      name: normalizedName || cred.user.email || "",
-      email: cred.user.email || "",
-      role: "user",
-      createdAt: serverTimestamp()
-    });
-
-    const jwt = await cred.user.getIdToken();
+    const profileSnap = await getDoc(doc(db, "users", cred.user.uid));
+    setProfile(profileSnap.exists() ? profileSnap.data() : null);
     setToken(jwt);
     return cred.user;
   }
@@ -68,19 +54,23 @@ export function AuthProvider({ children }) {
   async function logout() {
     await signOut(auth);
     setUser(null);
+    setProfile(null);
     setToken("");
   }
+
+  const role = profile?.role === "admin" ? "admin" : "user";
 
   const value = useMemo(
     () => ({
       user,
+      profile,
+      role,
       token,
       loadingAuth,
       login,
-      register,
       logout
     }),
-    [loadingAuth, token, user]
+    [loadingAuth, profile, role, token, user]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

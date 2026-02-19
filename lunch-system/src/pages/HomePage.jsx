@@ -29,7 +29,7 @@ export default function HomePage() {
       setHistory(logs);
       setHistoryError("");
     } catch (error) {
-      setHistoryError("Nao foi possivel carregar os ultimos registros.");
+      setHistoryError("Não foi possível carregar os últimos registros.");
     }
   }
 
@@ -67,7 +67,7 @@ export default function HomePage() {
       if (data.status === "OK") {
         setFeedback({
           type: "success",
-          message: `Almoco registrado! ${data.employeeName}`
+          message: `Almoço registrado! ${data.employeeName}`
         });
         await loadRecentHistory();
       } else if (data.status === "ALREADY_REGISTERED") {
@@ -80,17 +80,17 @@ export default function HomePage() {
 
         setFeedback({
           type: "warning",
-          message: `Voce ja registrou hoje as ${time}`
+          message: `Você já registrou hoje às ${time}`
         });
       } else if (data.status === "NOT_FOUND") {
-        setFeedback({ type: "error", message: "Funcionario nao encontrado" });
+        setFeedback({ type: "error", message: "Funcionário não encontrado" });
       } else if (data.status === "INACTIVE") {
-        setFeedback({ type: "inactive", message: "Funcionario inativo" });
+        setFeedback({ type: "inactive", message: "Funcionário inativo" });
       } else {
         setFeedback({ type: "error", message: "Resposta inesperada do servidor." });
       }
     } catch (error) {
-      setFeedback({ type: "error", message: "Erro de comunicacao com o servidor." });
+      setFeedback({ type: "error", message: "Erro de comunicação com o servidor." });
     } finally {
       submittingRef.current = false;
       setLoading(false);
@@ -124,7 +124,7 @@ export default function HomePage() {
 
   return (
     <div className="mx-auto flex min-h-[75vh] w-full max-w-2xl flex-col items-center justify-center">
-      <h1 className="mb-8 text-3xl font-bold">Registrar Almoco</h1>
+      <h1 className="mb-8 text-3xl font-bold">Registrar Almoço</h1>
 
       <form onSubmit={handleSubmit} className="flex w-full gap-2">
         <input
@@ -142,7 +142,7 @@ export default function HomePage() {
             }
           }}
           onBlur={() => setTimeout(() => inputRef.current?.focus(), 0)}
-          placeholder="Digite ou escaneie o codigo..."
+          placeholder="Digite ou escaneie o código..."
           className="flex-1 rounded-lg border-2 border-slate-300 px-4 py-3 text-lg focus:border-[#006633] focus:outline-none"
           disabled={loading}
         />
@@ -170,7 +170,7 @@ export default function HomePage() {
       )}
 
       <div className="mt-8 w-full">
-        <h2 className="mb-2 text-sm font-semibold text-slate-500">Ultimos 10 registros</h2>
+        <h2 className="mb-2 text-sm font-semibold text-slate-500">Últimos 10 registros</h2>
         {history.length === 0 ? (
           <p className="text-sm text-slate-500">Nenhum registro encontrado.</p>
         ) : (

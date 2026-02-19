@@ -40,8 +40,8 @@ export default function LunchReport({ logs, date, onExportXLSX, loading }) {
             <thead>
               <tr className="border-b border-slate-200 text-left text-slate-600">
                 <th className="px-2 py-2">Nome</th>
-                <th className="px-2 py-2">Codigo</th>
-                <th className="px-2 py-2">Horario</th>
+                <th className="px-2 py-2">Código</th>
+                <th className="px-2 py-2">Horário</th>
               </tr>
             </thead>
             <tbody>
