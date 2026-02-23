@@ -1,3 +1,5 @@
+import { SkeletonChart } from "./Skeleton";
+
 export default function MonthlyBarChart({ data, loading }) {
   const max = Math.max(...data.map((item) => item.count), 1);
 
@@ -6,7 +8,7 @@ export default function MonthlyBarChart({ data, loading }) {
       <h2 className="mb-4 text-lg font-semibold">Registros nos últimos 6 meses</h2>
 
       {loading ? (
-        <p className="text-slate-600">Carregando gráfico...</p>
+        <SkeletonChart />
       ) : (
         <div className="grid grid-cols-6 gap-3">
           {data.map((item) => {

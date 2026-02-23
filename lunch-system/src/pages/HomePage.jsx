@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { SkeletonCard, Spinner } from "../components/Skeleton";
 import { getRecentLunchLogs, registerLunch } from "../services/lunchService";
 
 function formatLogTime(value) {
@@ -149,9 +150,9 @@ export default function HomePage() {
         <button
           type="submit"
           disabled={loading}
-          className="rounded-lg bg-[#006633] px-6 py-3 font-semibold text-white hover:bg-[#005a2d] disabled:opacity-50"
+          className="flex items-center gap-2 rounded-lg bg-[#006633] px-6 py-3 font-semibold text-white transition-all hover:bg-[#005a2d] disabled:opacity-50"
         >
-          {loading ? "..." : "Enviar"}
+          {loading ? <><Spinner size="sm" className="text-white" /> Registrando...</> : "Enviar"}
         </button>
       </form>
 
@@ -171,14 +172,18 @@ export default function HomePage() {
 
       <div className="mt-8 w-full">
         <h2 className="mb-2 text-sm font-semibold text-slate-500">Últimos 10 registros</h2>
-        {history.length === 0 ? (
-          <p className="text-sm text-slate-500">Nenhum registro encontrado.</p>
+        {history.length === 0 && !historyError ? (
+          <div className="space-y-1.5">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <SkeletonCard key={i} lines={2} />
+            ))}
+          </div>
         ) : (
           <ul className="space-y-1">
             {history.map((item) => (
               <li
                 key={item.id}
-                className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm"
+                className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm transition-colors hover:bg-slate-50"
               >
                 <div>
                   <p className="font-medium text-slate-800">{item.employeeName}</p>

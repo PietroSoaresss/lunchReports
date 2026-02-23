@@ -22,7 +22,7 @@ function normalizeSector(sector) {
     .toUpperCase();
 
   const firstLetter = normalized[0] || "S";
-  const firstConsonant = normalized.split("").find((char) => !"AEIOU".includes(char)) || "X";
+  const firstConsonant = normalized.split("").find((char) => !firstLetter.includes(char) && !"AEIOU".includes(char)) || "X";
 
   return `${firstLetter}${firstConsonant}`;
 }
@@ -63,6 +63,8 @@ export async function listEmployees() {
   const snap = await getDocs(q);
   return snap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
 }
+
+
 
 export async function listRecentEmployees(maxItems = 5) {
   const q = query(collection(db, "employees"), orderBy("createdAt", "desc"), limit(maxItems));

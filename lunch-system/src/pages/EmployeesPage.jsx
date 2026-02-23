@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import EmployeeForm from "../components/EmployeeForm";
+import { SkeletonSidebar, Spinner } from "../components/Skeleton";
 import { addEmployee, listRecentEmployees } from "../services/employeeService";
 import { addSector, listSectors } from "../services/sectorService";
 
@@ -124,9 +125,9 @@ export default function EmployeesPage() {
           <button
             type="submit"
             disabled={savingSector}
-            className="self-end rounded-lg border border-[#006633] px-4 py-2.5 font-semibold text-[#006633] transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex items-center gap-2 self-end rounded-lg border border-[#006633] px-4 py-2.5 font-semibold text-[#006633] transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {savingSector ? "Salvando..." : "Cadastrar setor"}
+            {savingSector ? <><Spinner size="sm" className="text-[#006633]" /> Salvando...</> : "Cadastrar setor"}
           </button>
           {sectorMessage && (
             <div
@@ -169,7 +170,7 @@ export default function EmployeesPage() {
         </h2>
 
         {loadingRecent && recentEmployees.length === 0 ? (
-          <p className="mt-3 text-sm text-slate-500">Carregando...</p>
+          <div className="mt-3"><SkeletonSidebar items={5} /></div>
         ) : recentEmployees.length === 0 ? (
           <p className="mt-3 text-sm text-slate-500">Nenhum funcionário cadastrado.</p>
         ) : (

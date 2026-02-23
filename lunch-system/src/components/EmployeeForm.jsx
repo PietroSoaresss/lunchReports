@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Spinner } from "./Skeleton";
 
 const initialForm = {
   name: "",
@@ -64,9 +65,9 @@ export default function EmployeeForm({ onSubmit, loading, sectors = [], loadingS
       <button
         type="submit"
         disabled={loading || loadingSectors || sectors.length === 0}
-        className="rounded-lg bg-[#006633] px-4 py-2.5 font-semibold text-white transition hover:bg-[#005a2d] disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex items-center justify-center gap-2 rounded-lg bg-[#006633] px-4 py-2.5 font-semibold text-white transition hover:bg-[#005a2d] disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {loading ? "Salvando..." : "Cadastrar"}
+        {loading ? <><Spinner size="sm" className="text-white" /> Salvando...</> : "Cadastrar"}
       </button>
     </form>
   );

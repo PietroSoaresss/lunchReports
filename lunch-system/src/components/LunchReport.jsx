@@ -1,3 +1,5 @@
+import { SkeletonTable } from "./Skeleton";
+
 export default function LunchReport({ logs, date, onExportXLSX, loading }) {
   async function handleExportXLSX() {
     try {
@@ -31,9 +33,14 @@ export default function LunchReport({ logs, date, onExportXLSX, loading }) {
       </div>
 
       {loading ? (
-        <p className="text-slate-600">Carregando...</p>
+        <SkeletonTable rows={5} />
       ) : logs.length === 0 ? (
-        <p className="text-slate-600">Nenhum registro encontrado para a data selecionada.</p>
+        <div className="flex flex-col items-center justify-center py-8 text-slate-400">
+          <svg xmlns="http://www.w3.org/2000/svg" className="mb-2 h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-3-3v6m-7 4h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          <p className="text-sm">Nenhum registro encontrado para a data selecionada.</p>
+        </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full border-collapse text-sm">
@@ -48,7 +55,7 @@ export default function LunchReport({ logs, date, onExportXLSX, loading }) {
               {logs.map((log) => {
                 const time = formatTime(log.registeredAt);
                 return (
-                  <tr key={log.id} className="border-b border-slate-100">
+                  <tr key={log.id} className="border-b border-slate-100 transition-colors hover:bg-slate-50">
                     <td className="px-2 py-2">{log.employeeName}</td>
                     <td className="px-2 py-2">{log.employeeCode}</td>
                     <td className="px-2 py-2">{time}</td>

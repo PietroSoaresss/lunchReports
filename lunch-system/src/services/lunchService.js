@@ -177,6 +177,7 @@ export async function getLastSixMonthsStats() {
   return buckets.map((bucket) => ({ ...bucket, count: countByMonth.get(bucket.key) || 0 }));
 }
 
+
 export async function getRecentLunchLogs(maxItems = 10) {
   const q = query(collection(db, "lunch_logs"), orderBy("registeredAt", "desc"), limit(maxItems));
   const snap = await getDocs(q);

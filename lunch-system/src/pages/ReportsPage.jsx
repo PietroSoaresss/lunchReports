@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import LunchReport from "../components/LunchReport";
 import MonthlyBarChart from "../components/MonthlyBarChart";
+import { Spinner } from "../components/Skeleton";
 import { exportXLSX, getLastSixMonthsStats, getLunchLogs, getLunchLogsByMonth } from "../services/lunchService";
 
 function getTodayInSaoPaulo() {
@@ -85,9 +86,9 @@ export default function ReportsPage() {
             type="button"
             onClick={handleExportMonthly}
             disabled={exportingMonth}
-            className="rounded-lg border border-[#006633] px-4 py-2 text-sm font-semibold text-[#006633] hover:bg-emerald-50 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg border border-[#006633] px-4 py-2 text-sm font-semibold text-[#006633] transition-all hover:bg-emerald-50 disabled:opacity-50"
           >
-            {exportingMonth ? "Exportando..." : "Exportar mensal XLSX"}
+            {exportingMonth ? <><Spinner size="sm" className="text-[#006633]" /> Exportando...</> : "Exportar mensal XLSX"}
           </button>
         </div>
       </section>

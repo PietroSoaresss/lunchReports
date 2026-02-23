@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Spinner } from "../components/Skeleton";
 import { useAuth } from "../contexts/AuthContext";
 
 const initialLogin = {
@@ -55,9 +56,9 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="rounded-lg bg-[#006633] px-4 py-2.5 font-semibold text-white hover:bg-[#005a2d] disabled:opacity-50"
+            className="flex items-center justify-center gap-2 rounded-lg bg-[#006633] px-4 py-2.5 font-semibold text-white transition-all hover:bg-[#005a2d] disabled:opacity-50"
           >
-            {loading ? "Entrando..." : "Entrar"}
+            {loading ? <><Spinner size="sm" className="text-white" /> Entrando...</> : "Entrar"}
           </button>
         </form>
 
